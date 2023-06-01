@@ -1,121 +1,104 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useState, useEffect } from 'react';
+import { View, Button, Alert, PermissionsAndroid, Platform, Image } from 'react-native';
+import { launchCamera, CameraOptions } from 'react-native-image-picker/src'
+import RNFS from 'react-native-fs';
+import { PERMISSIONS, request } from 'react-native-permissions';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+const App = () => {
+  const [imageUri, setImageUri] = useState<string | null>(null);
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+  useEffect(() => {
+    // Solicitar permisos de cámara y sistema de archivos
+    requestPermissions();
+  }, []);
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  const requestPermissions = async () => {
+    try {
+      if (Platform.OS === 'android') {
+        const cameraPermission = await request(PERMISSIONS.ANDROID.CAMERA, {
+          title: 'Permiso de Cámara',
+          message: 'Esta aplicación necesita acceso a tu cámara.',
+          buttonPositive: 'Aceptar',
+          buttonNegative: 'Cancelar',
+        });
+  
+        if (cameraPermission === 'granted') {
+          console.log('Permiso de cámara concedido');
+        } else {
+          console.log('Permiso de cámara denegado');
+        }
+      } else {
+        console.log('No es un dispositivo Android');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
   };
 
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <Section title="Hola">
-            Hola que hace
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
+  const takePhoto = () => {
+    const options: CameraOptions = {
+      mediaType: 'photo',
+      saveToPhotos: false,
+    };
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+    launchCamera(options, (response: any) => {
+      if (response.didCancel) {
+        console.log('Se canceló la captura de imagen');
+      } else if (response.errorMessage) {
+        console.log('Error al tomar la foto:', response.errorMessage);
+      } else {
+        //const { uri } = response; 
+        const { uri } = response.assets[0];
+        console.log("uri:");
+        console.log(uri);
+        //console.log(uri);
+        savePhoto(uri);
+      }
+    });
+  };
+
+  const savePhoto = async (uri: string) => {
+    try {
+      if (!uri) {
+        console.log('URI de imagen no definido');
+        return;
+      }
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+  
+      const folderPath = `${RNFS.PicturesDirectoryPath}/photo-app/${year}/${month}/${day}`;
+      const folderExists = await RNFS.exists(folderPath);
+  
+      if (!folderExists) {
+        await RNFS.mkdir(folderPath, { NSURLIsExcludedFromBackupKey: true });
+      }
+  
+      const fileName = `${year}-${month}-${day}-${date.getTime()}.jpg`;
+      const destPath = `${folderPath}/${fileName}`;
+  
+      const fileExists = await RNFS.exists(uri);
+  
+      if (fileExists) {
+        await RNFS.moveFile(uri, destPath);
+        setImageUri(destPath);
+        console.log('Imagen guardada:', destPath);
+      } else {
+        console.warn('La imagen no existe en la ubicación original');
+      }
+    } catch (err) {
+      console.warn('Error al guardar la imagen:', err);
+    }
+  };
+  
+
+  return (
+    <View>
+      {imageUri && <Image source={{ uri: '/storage/emulated/0/Pictures/photo-app/2023/06/01/2023-06-01-1685660469363.jpg' }} style={{ width: 200, height: 200 }} />}
+      <Button title="Tomar Foto" onPress={takePhoto} />
+    </View>
+  );
+};
 
 export default App;
