@@ -95,7 +95,7 @@ const App = () => {
 
   return (
     <View>
-      {imageUri && <Image source={{ uri: '/storage/emulated/0/Pictures/photo-app/2023/06/01/2023-06-01-1685660469363.jpg' }} style={{ width: 200, height: 200 }} />}
+      {imageUri && <Image source={{ uri: imageUri }} style={{ width: 200, height: 200 }} />}
       <Button title="Tomar Foto" onPress={takePhoto} />
     </View>
   );
