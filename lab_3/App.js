@@ -134,12 +134,20 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.cameraButton} onPress={openCamera}>
-        <Ionicons name="camera" size={24} color="#fff" />
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.galleryButton} onPress={openGallery}>
-        <Ionicons name="images" size={24} color="#fff" />
-      </TouchableOpacity>
+	<Text style={styles.title}>CAMG2</Text>
+	<View style={styles.infoContainer}>
+      <Text style={styles.infoText}>Mi información</Text>
+    </View>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.cameraButton} onPress={openCamera} Text='Hola'>
+          <Ionicons name="camera" size={50} color="#5399C9" />
+		   <Text style={styles.buttonText}>Cámara</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.galleryButton} onPress={openGallery}>
+          <Ionicons name="images" size={50} color="#5399C9" />
+		  <Text style={styles.buttonText}>Galería</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
@@ -149,11 +157,31 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+	backgroundColor: '#F5F5F5',
   },
+  title: {
+	fontSize: 30,
+	fontWeight: 'bold',
+	marginBottom: 70,
+  },
+  infoContainer: {
+	width: 330,
+    height: 400,
+	backgroundColor: '#fff',
+	borderRadius: 10,
+	padding: 20,
+	marginBottom: 20,
+  },
+  infoText: {
+    fontSize: 16,
+	textAlign: 'center',
+  },
+
   buttonContainer: {
-    position: 'absolute',
-    bottom: 20,
-    alignSelf: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '80%',
   },
   captureButton: {
     width: 70,
@@ -177,15 +205,22 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   cameraButton: {
-    backgroundColor: '#000',
-    padding: 20,
-    borderRadius: 50,
+    width: 150,
+    height: 170,
+    borderRadius: 20,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 10,
   },
   galleryButton: {
-    backgroundColor: '#000',
-    padding: 20,
-    borderRadius: 50,
+    width: 150,
+    height: 170,
+    borderRadius: 20,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+	marginBottom: 10,
   },
   goBackButton: {
     position: 'absolute',
@@ -215,4 +250,3 @@ const styles = StyleSheet.create({
     paddingBottom: 70, // Agrega un paddingBottom para mostrar la última fila completa
   },
 });
-
