@@ -67,6 +67,7 @@ export default function App() {
   };
 
   if (photo) {
+    console.log('photo si esta');
     return (
       <SafeAreaView style={styles.container}>
         <Image style={styles.preview} source={{ uri: "data:image/jpg;base64," + photo.base64 }} />
@@ -79,6 +80,9 @@ export default function App() {
       </SafeAreaView>
     );
   }
+  else{
+    console.log('photo no esta');
+  }
 
   if (showCamera) {
     return (
@@ -87,9 +91,13 @@ export default function App() {
           <TouchableOpacity style={styles.captureButton} onPress={takePic} />
         </View>
         <StatusBar style="auto" />
+        <TouchableOpacity style={styles.discardButton} onPress={() => setShowCamera(false)}>
+          <Ionicons name="arrow-back" size={24} color="#fff" />
+        </TouchableOpacity>
       </Camera>
     );
   }
+  
 
   return (
     <SafeAreaView style={styles.container}>
