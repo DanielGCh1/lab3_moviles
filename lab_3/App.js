@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, SafeAreaView, Button, Image, TouchableOpacity, FlatList, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Button, Image, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
@@ -118,19 +118,13 @@ export default function App() {
   if (photosList.length > 0) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.photosContainer}>
-          <FlatList
-            data={photosList}
-            key={numColumns}
-            keyExtractor={(item) => item.id}
-            numColumns={numColumns}
-            renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => setPhoto(item)}>
-                <Image style={styles.thumbnail} source={{ uri: item.uri }} />
-              </TouchableOpacity>
-            )}
-          />
-        </View>
+        <ScrollView contentContainerStyle={styles.photosContainer}>
+          {photosList.map((item) => (
+            <TouchableOpacity key={item.id} onPress={() => setPhoto(item)}>
+              <Image style={styles.thumbnail} source={{ uri: item.uri }} />
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
         <TouchableOpacity style={styles.goBackButton} onPress={goBack}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
@@ -195,8 +189,8 @@ const styles = StyleSheet.create({
   },
   goBackButton: {
     position: 'absolute',
-    top: 20,
-    left: 20,
+    top: 30,
+    left: 10,
     paddingHorizontal: 10,
     paddingVertical: 5,
     backgroundColor: '#000',
@@ -214,10 +208,11 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   photosContainer: {
-    flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
-    marginTop: 80,
+    justifyContent: 'flex-start', // Ajusta aquí para mostrar la última fila en el lado izquierdo
+    marginTop: 70,
+    paddingBottom: 70, // Agrega un paddingBottom para mostrar la última fila completa
   },
 });
+
