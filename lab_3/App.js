@@ -11,6 +11,7 @@ const photoSize = screenWidth / 3 - 10; // Resta 10 para tener en cuenta los má
 
 export default function App() {
   let cameraRef = useRef();
+  const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
   const [hasCameraPermission, setHasCameraPermission] = useState();
   const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState();
   const [photo, setPhoto] = useState();
@@ -26,6 +27,13 @@ export default function App() {
       setHasMediaLibraryPermission(mediaLibraryPermission.status === "granted");
     })();
   }, []);
+
+const goBack = () => {
+  setPhoto(undefined);
+  setShowCamera(false);
+  setPhotosList([]);
+};
+
 
   const openCamera = () => {
     setShowCamera(true);
@@ -47,11 +55,6 @@ export default function App() {
     setPhotosList(mediaResult.assets);
   };
 
-  const goBack = () => {
-    setPhoto(undefined);
-    setShowCamera(false);
-    setPhotosList([]);
-  };
 
   let takePic = async () => {
     let options = {
@@ -87,13 +90,21 @@ export default function App() {
       console.log(error);
     }
   };
+  
+  const toggleCameraType = () => {
+	setCameraType(prevCameraType => {
+    return prevCameraType === Camera.Constants.Type.back
+      ? Camera.Constants.Type.front
+      : Camera.Constants.Type.back;
+	});
+  };
 
   if (photo) {
     return (
       <SafeAreaView style={styles.container}>
         <Image style={styles.preview} source={{ uri: photo.uri }} />
-        <TouchableOpacity style={styles.goBackButton} onPress={goBack}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+		<TouchableOpacity style={styles.goBackButton} onPress={goBack}>
+          <Ionicons name="arrow-back" size={24} color="#5399C9" />
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -102,12 +113,15 @@ export default function App() {
   if (showCamera) {
     return (
       <SafeAreaView style={styles.container}>
-        <Camera style={styles.cameraContainer} ref={cameraRef}>
-          <View style={styles.buttonContainer}>
+        <Camera style={styles.cameraContainer} type={cameraType} ref={cameraRef}>
+          <View style={styles.buttonCameraContainer}>
             <TouchableOpacity style={styles.captureButton} onPress={takePic} />
           </View>
           <TouchableOpacity style={styles.goBackButtonCamera} onPress={goBack}>
-            <Ionicons name="arrow-back" size={24} color="#fff" />
+            <Ionicons name="arrow-back" size={24} color="#5399C9" />
+          </TouchableOpacity>
+		  <TouchableOpacity style={styles.toggleCameraButton} onPress={toggleCameraType}>
+            <Ionicons name="camera-reverse" size={30} color="#fff" />
           </TouchableOpacity>
         </Camera>
         <StatusBar style="auto" />
@@ -123,10 +137,11 @@ export default function App() {
             <TouchableOpacity key={item.id} onPress={() => setPhoto(item)}>
               <Image style={styles.thumbnail} source={{ uri: item.uri }} />
             </TouchableOpacity>
+			
           ))}
         </ScrollView>
         <TouchableOpacity style={styles.goBackButton} onPress={goBack}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="arrow-back" size={24} color="#5399C9" />
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -139,7 +154,7 @@ export default function App() {
       <Text style={styles.infoText}>Mi información</Text>
     </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.cameraButton} onPress={openCamera} Text='Hola'>
+        <TouchableOpacity style={styles.cameraButton} onPress={openCamera}>
           <Ionicons name="camera" size={50} color="#5399C9" />
 		   <Text style={styles.buttonText}>Cámara</Text>
         </TouchableOpacity>
@@ -176,7 +191,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
 	textAlign: 'center',
   },
-
+  toggleCameraButton: {
+  position: 'absolute',
+  bottom: 30,
+  right: 60,
+  padding: 10,
+},
+ buttonCameraContainer: {
+    position: 'absolute',
+    bottom: 20,
+    alignSelf: 'center',
+  },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -187,9 +212,8 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    borderWidth: 2,
+    borderWidth: 5,
     borderColor: '#fff',
-    backgroundColor: '#000',
   },
   cameraContainer: {
     flex: 1,
@@ -228,7 +252,6 @@ const styles = StyleSheet.create({
     left: 10,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    backgroundColor: '#000',
     borderRadius: 5,
     zIndex: 1,
   },
@@ -238,7 +261,6 @@ const styles = StyleSheet.create({
     left: 20,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    backgroundColor: '#000',
     borderRadius: 5,
     zIndex: 1,
   },
@@ -247,6 +269,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'flex-start', // Ajusta aquí para mostrar la última fila en el lado izquierdo
     marginTop: 70,
+	backgroundColor:'#F5F5F5',
     paddingBottom: 70, // Agrega un paddingBottom para mostrar la última fila completa
   },
 });
