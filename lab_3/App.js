@@ -1,9 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, SafeAreaView, Button, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Button, Image, TouchableOpacity, FlatList, Dimensions } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+
+const screenWidth = Dimensions.get('window').width;
+const photoSize = screenWidth / 3 - 10; // Resta 10 para tener en cuenta los márgenes
 
 export default function App() {
   let cameraRef = useRef();
@@ -11,6 +15,8 @@ export default function App() {
   const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState();
   const [photo, setPhoto] = useState();
   const [showCamera, setShowCamera] = useState(false);
+  const [photosList, setPhotosList] = useState([]);
+  const [numColumns, setNumColumns] = useState(3);
 
   useEffect(() => {
     (async () => {
@@ -25,11 +31,27 @@ export default function App() {
     setShowCamera(true);
   };
 
-  if (hasCameraPermission === undefined) {
-    return <Text>Requesting permissions...</Text>;
-  } else if (!hasCameraPermission) {
-    return <Text>Permission for camera not granted. Please change this in settings.</Text>;
-  }
+  const openGallery = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert('Permission to access camera roll is required!');
+      return;
+    }
+
+    const mediaResult = await MediaLibrary.getAssetsAsync({
+      mediaType: ['photo'],
+      first: 20,
+    });
+
+    setPhotosList(mediaResult.assets);
+  };
+
+  const goBack = () => {
+    setPhoto(undefined);
+    setShowCamera(false);
+    setPhotosList([]);
+  };
 
   let takePic = async () => {
     let options = {
@@ -67,42 +89,62 @@ export default function App() {
   };
 
   if (photo) {
-    console.log('photo si esta');
     return (
       <SafeAreaView style={styles.container}>
-        <Image style={styles.preview} source={{ uri: "data:image/jpg;base64," + photo.base64 }} />
-        <TouchableOpacity style={styles.saveButton} onPress={() => savePhoto(photo)}>
-          <Ionicons name="save" size={24} color="#fff" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.discardButton} onPress={() => setPhoto(undefined)}>
+        <Image style={styles.preview} source={{ uri: photo.uri }} />
+        <TouchableOpacity style={styles.goBackButton} onPress={goBack}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
       </SafeAreaView>
     );
   }
-  else{
-    console.log('photo no esta');
-  }
 
   if (showCamera) {
     return (
-      <Camera style={styles.container} ref={cameraRef}>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.captureButton} onPress={takePic} />
-        </View>
+      <SafeAreaView style={styles.container}>
+        <Camera style={styles.cameraContainer} ref={cameraRef}>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.captureButton} onPress={takePic} />
+          </View>
+          <TouchableOpacity style={styles.goBackButtonCamera} onPress={goBack}>
+            <Ionicons name="arrow-back" size={24} color="#fff" />
+          </TouchableOpacity>
+        </Camera>
         <StatusBar style="auto" />
-        <TouchableOpacity style={styles.discardButton} onPress={() => setShowCamera(false)}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-      </Camera>
+      </SafeAreaView>
     );
   }
-  
+
+  if (photosList.length > 0) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.photosContainer}>
+          <FlatList
+            data={photosList}
+            key={numColumns}
+            keyExtractor={(item) => item.id}
+            numColumns={numColumns}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => setPhoto(item)}>
+                <Image style={styles.thumbnail} source={{ uri: item.uri }} />
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+        <TouchableOpacity style={styles.goBackButton} onPress={goBack}>
+          <Ionicons name="arrow-back" size={24} color="#fff" />
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <TouchableOpacity style={styles.cameraButton} onPress={openCamera}>
         <Ionicons name="camera" size={24} color="#fff" />
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.galleryButton} onPress={openGallery}>
+        <Ionicons name="images" size={24} color="#fff" />
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -127,32 +169,55 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
     backgroundColor: '#000',
   },
+  cameraContainer: {
+    flex: 1,
+    alignSelf: 'stretch',
+  },
   preview: {
     flex: 1,
     alignSelf: 'stretch',
   },
-  saveButton: {
-    position: 'absolute',
-    top: 40,
-    right: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    backgroundColor: '#000',
-    borderRadius: 5,
-  },
-  discardButton: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    backgroundColor: '#000',
-    borderRadius: 5,
+  thumbnail: {
+    width: photoSize,
+    height: photoSize,
+    margin: 5,
   },
   cameraButton: {
     backgroundColor: '#000',
     padding: 20,
     borderRadius: 50,
+    marginBottom: 10,
+  },
+  galleryButton: {
+    backgroundColor: '#000',
+    padding: 20,
+    borderRadius: 50,
+  },
+  goBackButton: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    backgroundColor: '#000',
+    borderRadius: 5,
+    zIndex: 1,
+  },
+  goBackButtonCamera: {
+    position: 'absolute',
+    top: 30,
+    left: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    backgroundColor: '#000',
+    borderRadius: 5,
+    zIndex: 1,
+  },
+  photosContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginTop: 80,
   },
 });
-
