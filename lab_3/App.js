@@ -149,17 +149,21 @@ const goBack = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-	<Text style={styles.title}>CAMG2</Text>
+	<Text style={styles.title}>Laboratorio 3</Text>
 	<View style={styles.infoContainer}>
-      <Text style={styles.infoText}>Mi información</Text>
+  <Text style={styles.infoText}>Integrantes</Text>
+      <Text style={styles.infoTextSub}>Natalia Rojas</Text>
+      <Text style={styles.infoTextSub}>Libny Gómez</Text>
+      <Text style={styles.infoTextSub}>Diego Jiménez</Text>
+      <Text style={styles.infoTextSub}>Daniel Gómez</Text>
     </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.cameraButton} onPress={openCamera}>
-          <Ionicons name="camera" size={50} color="#5399C9" />
+          <Ionicons name="camera" size={50} color="#138E8E" />
 		   <Text style={styles.buttonText}>Cámara</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.galleryButton} onPress={openGallery}>
-          <Ionicons name="images" size={50} color="#5399C9" />
+          <Ionicons name="images" size={50} color="#138E8E"/>
 		  <Text style={styles.buttonText}>Galería</Text>
         </TouchableOpacity>
       </View>
@@ -172,25 +176,43 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-	backgroundColor: '#F5F5F5',
+	  backgroundColor: '#E0FAFA',
   },
   title: {
-	fontSize: 30,
-	fontWeight: 'bold',
-	marginBottom: 70,
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 60,
+    color:'#138E8E',
+    fontFamily: 'serif',
+  },
+  buttonText: {
+    fontSize: 15,
+    color: '#138E8E',
+    fontFamily: 'serif',
   },
   infoContainer: {
-	width: 330,
-    height: 400,
-	backgroundColor: '#fff',
-	borderRadius: 10,
-	padding: 20,
-	marginBottom: 20,
-  },
+    width: 330,
+    height: 300,
+    backgroundColor: '#B3F1F1',
+    borderRadius: 10,
+    padding: 20,
+    marginBottom: 20,
+    },
   infoText: {
-    fontSize: 16,
-	textAlign: 'center',
-  },
+    fontSize: 18,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontFamily: 'serif',
+    color: '#138E8E',
+    margin:10
+    },
+  infoTextSub: {
+      fontSize: 16,
+    textAlign: 'center',
+    fontFamily: 'serif',
+    color: '#138E8E',
+    margin:10
+    },
   toggleCameraButton: {
   position: 'absolute',
   bottom: 30,
@@ -232,7 +254,7 @@ const styles = StyleSheet.create({
     width: 150,
     height: 170,
     borderRadius: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#B3F1F1',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
@@ -243,8 +265,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: '#fff',
     justifyContent: 'center',
+    backgroundColor: '#B3F1F1',
     alignItems: 'center',
-	marginBottom: 10,
+	  marginBottom: 10,
   },
   goBackButton: {
     position: 'absolute',
@@ -269,7 +292,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'flex-start', // Ajusta aquí para mostrar la última fila en el lado izquierdo
     marginTop: 70,
-	backgroundColor:'#F5F5F5',
+    backgroundColor:'#E0FAFA',
     paddingBottom: 70, // Agrega un paddingBottom para mostrar la última fila completa
   },
 });
