@@ -28,13 +28,6 @@ export default function App() {
     })();
   }, []);
 
-const goBack = () => {
-  setPhoto(undefined);
-  setShowCamera(false);
-  setPhotosList([]);
-};
-
-
   const openCamera = () => {
     setShowCamera(true);
   };
@@ -46,15 +39,20 @@ const goBack = () => {
       alert('Permission to access camera roll is required!');
       return;
     }
-
+	
     const mediaResult = await MediaLibrary.getAssetsAsync({
       mediaType: ['photo'],
-      first: 20,
+      first: 200,
     });
-
+	console.log(mediaResult.assets);
     setPhotosList(mediaResult.assets);
   };
-
+  
+	const goBack = () => {
+	  setPhoto(undefined);
+	  setShowCamera(false);
+	  setPhotosList([]);
+	};
 
   let takePic = async () => {
     let options = {
@@ -149,9 +147,10 @@ const goBack = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-	<Text style={styles.title}>Laboratorio 3</Text>
+	<Text style={styles.title}>CAMG2</Text>
 	<View style={styles.infoContainer}>
-  <Text style={styles.infoText}>Integrantes</Text>
+  <Text style={styles.infoText}>Laboratorio #3</Text>
+	<Text style={styles.infoTextSub}>Integrantes:</Text>
       <Text style={styles.infoTextSub}>Natalia Rojas</Text>
       <Text style={styles.infoTextSub}>Libny Gómez</Text>
       <Text style={styles.infoTextSub}>Diego Jiménez</Text>
@@ -159,11 +158,11 @@ const goBack = () => {
     </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.cameraButton} onPress={openCamera}>
-          <Ionicons name="camera" size={50} color="#138E8E" />
+          <Ionicons name="camera" size={50} color="#fff" />
 		   <Text style={styles.buttonText}>Cámara</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.galleryButton} onPress={openGallery}>
-          <Ionicons name="images" size={50} color="#138E8E"/>
+          <Ionicons name="images" size={50} color="#fff"/>
 		  <Text style={styles.buttonText}>Galería</Text>
         </TouchableOpacity>
       </View>
@@ -176,7 +175,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-	  backgroundColor: '#E0FAFA',
+	  backgroundColor: '#111A21',
   },
   title: {
     fontSize: 30,
@@ -187,14 +186,14 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 15,
-    color: '#138E8E',
+    color: '#fff',
     fontFamily: 'serif',
   },
   infoContainer: {
     width: 330,
     height: 300,
-    backgroundColor: '#B3F1F1',
-    borderRadius: 10,
+    backgroundColor: '#004B5C',
+    borderRadius: 30,
     padding: 20,
     marginBottom: 20,
     },
@@ -203,14 +202,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     fontFamily: 'serif',
-    color: '#138E8E',
+    color: '#fff',
     margin:10
     },
   infoTextSub: {
       fontSize: 16,
     textAlign: 'center',
     fontFamily: 'serif',
-    color: '#138E8E',
+    color: '#fff',
     margin:10
     },
   toggleCameraButton: {
@@ -254,7 +253,7 @@ const styles = StyleSheet.create({
     width: 150,
     height: 170,
     borderRadius: 20,
-    backgroundColor: '#B3F1F1',
+    backgroundColor: '#004B5C',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
@@ -265,7 +264,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: '#fff',
     justifyContent: 'center',
-    backgroundColor: '#B3F1F1',
+    backgroundColor: '#004B5C',
     alignItems: 'center',
 	  marginBottom: 10,
   },
@@ -292,7 +291,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'flex-start', // Ajusta aquí para mostrar la última fila en el lado izquierdo
     marginTop: 70,
-    backgroundColor:'#E0FAFA',
+    backgroundColor:'#004B5C',
     paddingBottom: 70, // Agrega un paddingBottom para mostrar la última fila completa
   },
 });
