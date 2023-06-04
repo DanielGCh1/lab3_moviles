@@ -134,12 +134,24 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.cameraButton} onPress={openCamera}>
-        <Ionicons name="camera" size={24} color="#fff" />
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.galleryButton} onPress={openGallery}>
-        <Ionicons name="images" size={24} color="#fff" />
-      </TouchableOpacity>
+	<Text style={styles.title}>Laboratorio 3</Text>
+	<View style={styles.infoContainer}>
+      <Text style={styles.infoText}>Integrantes</Text>
+      <Text style={styles.infoTextSub}>Natalia Rojas</Text>
+      <Text style={styles.infoTextSub}>Libny Gómez</Text>
+      <Text style={styles.infoTextSub}>Diego Jiménez</Text>
+      <Text style={styles.infoTextSub}>Daniel Gómez</Text>
+    </View>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.cameraButton} onPress={openCamera}>
+          <Ionicons name="camera" size={50} color="#138E8E" />
+		   <Text style={styles.buttonText}>Cámara</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.galleryButton} onPress={openGallery}>
+          <Ionicons name="images" size={50} color="#138E8E" />
+		  <Text style={styles.buttonText}>Galería</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
@@ -149,8 +161,50 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+	  backgroundColor: '#E0FAFA',
   },
-  buttonContainer: {
+  title: {
+	fontSize: 30,
+	fontWeight: 'bold',
+	marginBottom: 60,
+  color:'#138E8E',
+  fontFamily: 'serif',
+  },
+  buttonText: {
+    fontSize: 15,
+    color: '#138E8E',
+    fontFamily: 'serif',
+  },
+  infoContainer: {
+	width: 330,
+  height: 300,
+	backgroundColor: '#B3F1F1',
+	borderRadius: 10,
+	padding: 20,
+	marginBottom: 20,
+  },
+  infoText: {
+  fontSize: 18,
+	textAlign: 'center',
+  fontWeight: 'bold',
+  fontFamily: 'serif',
+  color: '#138E8E',
+  margin:10
+  },
+  infoTextSub: {
+    fontSize: 16,
+	textAlign: 'center',
+  fontFamily: 'serif',
+  color: '#138E8E',
+  margin:10
+  },
+  toggleCameraButton: {
+  position: 'absolute',
+  bottom: 30,
+  right: 60,
+  padding: 10,
+  },
+  buttonCameraContainer: {
     position: 'absolute',
     bottom: 20,
     alignSelf: 'center',
@@ -177,15 +231,22 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   cameraButton: {
-    backgroundColor: '#000',
-    padding: 20,
-    borderRadius: 50,
+    width: 150,
+    height: 170,
+    borderRadius: 20,
+    backgroundColor: '#B3F1F1',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 10,
   },
   galleryButton: {
-    backgroundColor: '#000',
-    padding: 20,
-    borderRadius: 50,
+    width: 150,
+    height: 170,
+    borderRadius: 20,
+    backgroundColor: '#B3F1F1',
+    justifyContent: 'center',
+    alignItems: 'center',
+	marginBottom: 10,
   },
   goBackButton: {
     position: 'absolute',
@@ -212,6 +273,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'flex-start', // Ajusta aquí para mostrar la última fila en el lado izquierdo
     marginTop: 70,
+	backgroundColor:'#E0FAFA',
     paddingBottom: 70, // Agrega un paddingBottom para mostrar la última fila completa
   },
 });
